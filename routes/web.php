@@ -21,5 +21,6 @@ $router->group(['prefix' => 'api' ], function () use ($router) {
     $router->group(['namespace' => 'User', 'prefix' => 'user'], function () use ($router) {
         $router->get('/', 'UserController@index');
         $router->post('/store', 'UserController@store');
+        $router->get('/show/{id}', 'UserController@show');
     });
 });

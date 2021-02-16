@@ -31,12 +31,6 @@ class UserController extends Controller
     public function store(Request $request) {
 
         $filename = null;
-        // if($request->file('photo')) {
-        //     $filename = Str::random(5) . $request->email . '.jpg';
-        //     $file = $request->file('photo');
-
-        //     $file->move(base_path('public/images'), $filename);
-        // }
 
         if ($request->hasFile('photo')) {
             //MAKA GENERATE NAMA UNTUK FILE TERSEBUT DENGAN FORMAT STRING RANDOM + EMAIL
@@ -45,7 +39,7 @@ class UserController extends Controller
             $file->move(base_path('public/images'), $filename); //SIMPAN FILE TERSEBUT KE DALAM FOLDER PUBLIC/IMAGES
         }
 
-        User::create([
+        $users = User::create([
             'name' => $request->name,
             'identity_id' => $request->identity_id,
             'gender' => $request->gender,
@@ -58,6 +52,23 @@ class UserController extends Controller
             'role' => $request->role,
             'status' => $request->status
         ]);
-        return response()->json(['status' => 'success']);
+        return $this->responseSuccess($users, 'POST users', 200);
+    }
+
+    public function show($id) {
+        $users = User::findOrFail($id);
+        
+        try {
+            return $this->responseSuccess($users, 'GET', 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $this->responseError($th->getMessage(), 'Erros', 401);
+        } catch (\Illuminate\Database\QueryException $ex) {
+           return $this->responseError($ex->getMessage(), 'Erros', 401);
+        } catch (\Exception $e) {
+            return $this->responseError($e->getMessage(), 'Erros', 401);
+         } catch (\PDOException $e) {
+            return $this->responseError($e->getMessage(), 'Erros', 401);
+         }
     }
 }
