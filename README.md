@@ -96,4 +96,4 @@
 
 ## References 
 
-[daengweb](https://daengweb.id/membuat-aplikasi-ekspedisi-lumen-6-2-authentication-manage-users)
+Link [daengweb](https://daengweb.id/membuat-aplikasi-ekspedisi-lumen-6-2-authentication-manage-users)
