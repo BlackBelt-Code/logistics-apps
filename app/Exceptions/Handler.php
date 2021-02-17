@@ -124,7 +124,7 @@ class Handler extends ExceptionHandler
         
         return [
             'status' => $definition['code'] ?? 500,
-            'title' => $definition['title'] ?? 'Error',
+            'user' => $definition['user'] ?? 'Error',
             'description' => $definition['message'],
         ];
     }

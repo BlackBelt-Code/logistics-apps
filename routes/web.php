@@ -22,5 +22,7 @@ $router->group(['prefix' => 'api' ], function () use ($router) {
         $router->get('/', 'UserController@index');
         $router->post('/store', 'UserController@store');
         $router->get('/show/{id}', 'UserController@show');
+        $router->get('/edit/{id}', 'UserController@edit');
+        $router->post('/update/{id}', 'UserController@update');
     });
 });
