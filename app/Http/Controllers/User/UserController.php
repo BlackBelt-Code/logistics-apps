@@ -125,4 +125,14 @@ class UserController extends Controller
             return $this->responseError($e->getMessage(), 'Erros', 401);
         }
     }
+
+    public function destroy($id) {
+        $user = User::find($id);
+
+        unlink(base_path('public/images' . $user->photo));
+
+        if($user->delete()) {
+            return $this->responseSuccess('DELETE', $user, 200);
+        }
+    }
 }
