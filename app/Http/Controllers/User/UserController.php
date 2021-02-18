@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Http\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
 
@@ -28,8 +28,45 @@ class UserController extends Controller
         return $this->responseSuccess('GET users', $users, 200);
     }
 
+    public function login(Request $request) {
+        
+        $this->validate($request, [
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        // var_dump($request->password); die;
+
+        if($user && Hash::check($request->password, $user->password)) {
+            
+            $token = Str::random(40);
+
+            $user->update(['api_token'=> $token]);
+
+            return response()->json($user);
+        }
+
+        return response()->json(['error' => 'erros']);
+    }
+
     public function store(Request $request)
     {
+
+        $this->validate($request, [
+            'name' => 'required',
+            'identity_id' => 'required',
+            'gender' =>  'required',
+            'address' =>  'required',
+            // 'photo' =>  'required',
+            'email' =>  'required',
+            'password' =>  'required',
+            'phone_number' => 'required',
+            // 'api_token' => 'test', //BAGIAN INI HARUSNYA KOSONG KARENA AKAN TERISI JIKA USER LOGIN
+            'role' => 'required',
+            'status' =>  'required',
+        ]);
 
         $filename = null;
 
@@ -109,11 +146,27 @@ class UserController extends Controller
         return $this->responseSuccess('PUT', $users, 200);
     }
 
+    public function bearerToken()
+  {
+       $header = $this->header('Authorization', '');
+       if (Str::startsWith($header, 'Bearer ')) {
+           return Str::substr($header, 7);
+       }
+  }
+
     public function show($id)
     {
-        $users = User::findOrFail($id);
+        $users = User::find($id);
+        $token = request()->bearerToken();
+
         try {
-            return $this->responseSuccess('GET BY ID', $users, 200);
+            
+            if($users->api_token == $token) {
+                return $this->responseSuccess('GET BY ID', $users, 200);
+            } else {
+                return response()->json(['erros'  => 'Cannot Get Another User'], 401);
+            }
+
         } catch (\Throwable $th) {
             //throw $th;
             return $this->responseError($th->getMessage(), 'Erros', 401);
