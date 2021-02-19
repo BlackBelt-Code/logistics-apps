@@ -18,7 +18,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api' ], function () use ($router) {
-
+    // 
     $router->group(['namespace' => 'User', 'prefix' => 'user', 'middleware' => 'auth'], function () use ($router) {
         $router->get('/', 'UserController@index');
         $router->post('/store', 'UserController@store');
@@ -26,9 +26,18 @@ $router->group(['prefix' => 'api' ], function () use ($router) {
         $router->get('/edit/{id}', 'UserController@edit');
         $router->post('/update/{id}', 'UserController@update');
         $router->delete('/destroy/{id}', 'UserController@destroy');
+        $router->get('/login', 'UserController@getUserLogin');
+        $router->post('/logout', 'UserController@logout');
+        $router->get('/search', 'UserController@search');
     });
 
     $router->group(['prefix' => 'login', 'namespace' => 'User'], function () use ($router) {
         $router->post('/', 'UserController@login');
+    });
+
+    $router->group(['prefix' => 'reset', 'namespace' => 'User'], function () use ($router) {
+
+        $router->post('/', 'UserController@sendResetToken');
+        $router->put('/{token}', 'UserController@verifyResetPassword');
     });
 });

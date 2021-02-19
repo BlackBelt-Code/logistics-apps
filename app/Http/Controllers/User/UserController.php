@@ -8,6 +8,9 @@ use App\Http\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
+
 class UserController extends Controller
 {
 
@@ -28,8 +31,9 @@ class UserController extends Controller
         return $this->responseSuccess('GET users', $users, 200);
     }
 
-    public function login(Request $request) {
-        
+    public function login(Request $request)
+    {
+
         $this->validate($request, [
             'email' => 'required|email|exists:users,email',
             'password' => 'required|string|min:6',
@@ -39,13 +43,13 @@ class UserController extends Controller
 
         // var_dump($request->password); die;
 
-        if($user && Hash::check($request->password, $user->password)) {
-            
+        if ($user && Hash::check($request->password, $user->password)) {
+
             $token = Str::random(40);
 
-            $user->update(['api_token'=> $token]);
+            $user->update(['api_token' => $token]);
 
-            return response()->json($user);
+            return response()->json(['message' => 'GET', 'data' => $user, 'token' => $token]);
         }
 
         return response()->json(['error' => 'erros']);
@@ -134,7 +138,7 @@ class UserController extends Controller
             'identity_id' => $request->identity_id,
             'gender' => $request->gender,
             'address' => $request->address,
-            'photo' => $filename, //UNTUK FOTO KITA GUNAKAN VALUE DARI VARIABLE FILENAME
+            // 'photo' => $filename, //UNTUK FOTO KITA GUNAKAN VALUE DARI VARIABLE FILENAME
             'email' => $request->email,
             'password' =>  $password, //PASSWORDNYA KITA ENCRYPT
             'phone_number' => $request->phone_number,
@@ -147,12 +151,12 @@ class UserController extends Controller
     }
 
     public function bearerToken()
-  {
-       $header = $this->header('Authorization', '');
-       if (Str::startsWith($header, 'Bearer ')) {
-           return Str::substr($header, 7);
-       }
-  }
+    {
+        $header = $this->header('Authorization', '');
+        if (Str::startsWith($header, 'Bearer ')) {
+            return Str::substr($header, 7);
+        }
+    }
 
     public function show($id)
     {
@@ -160,13 +164,12 @@ class UserController extends Controller
         $token = request()->bearerToken();
 
         try {
-            
-            if($users->api_token == $token) {
+
+            if ($users->api_token == $token) {
                 return $this->responseSuccess('GET BY ID', $users, 200);
             } else {
                 return response()->json(['erros'  => 'Cannot Get Another User'], 401);
             }
-
         } catch (\Throwable $th) {
             //throw $th;
             return $this->responseError($th->getMessage(), 'Erros', 401);
@@ -179,13 +182,76 @@ class UserController extends Controller
         }
     }
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $user = User::find($id);
 
         unlink(base_path('public/images' . $user->photo));
 
-        if($user->delete()) {
+        if ($user->delete()) {
             return $this->responseSuccess('DELETE', $user, 200);
         }
+    }
+
+    public function sendResetToken(Request $request) {
+        
+        // $this->validate($request, [
+        //     'email' => 'required|email|exists:users'
+        // ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        // dd($user);
+
+        $user->update(['reset_token' => Str::random(40)]);
+
+        Mail::to('ilyas@mewahniagajaya.com')->send(new ResetPasswordMail($user));
+
+        echo "send email using gmail smtp";
+
+    }
+
+    public function verifyResetPassword(Request $request, $token) {
+        
+        $user = User::where('reset_token', $token)->first();
+
+        if($user) {
+            $user->update(['password' => app('hash')->make($request->password)]);
+
+            return response()->json(['status' => 'success']);
+        }
+
+        return response()->json(['status' => 'error']);
+    }
+
+    public function getUserLogin(Request $request) {
+        return response()->json([
+            'status' => 'success',
+            'data' => $request->user(),
+        ]);
+    }
+
+    public function logout(Request $request) {
+        $user = $request->user();
+        $user->update(['api_token' => NULL]);
+
+        return response()->json(['status' => 'success' ], 200);
+    }
+
+
+    public function search(Request $request) {
+
+            $user = User::orderBy('created_at', 'desc')->when($request->q, function($user) use ($request) {
+                $user = $user->where('name', 'LIKE', '%' . $request->q . '%');
+            })
+            ->when($request->id, function($user) use ($request) {
+                $user = $user->where('id', '=', $request->id);
+            })->paginate(5);
+
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $user,
+        ]);
     }
 }
