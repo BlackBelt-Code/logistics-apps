@@ -13,6 +13,12 @@ class CustomerController extends Controller
     // use Traits/ApiResponser
     use ApiResponser;
 
+    public function __construct()
+    {
+        // $this->middleware('auth');
+
+    }
+
     public function bearerToken()
     {
         $header = $this->header('Authorization', '');
@@ -116,6 +122,20 @@ class CustomerController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
             $response =  $this->responseError($th->getMessage(), 401);
+        }
+
+        return $response;
+    }
+
+    public function destroy($id) {
+        $customer = Customer::find($id);
+
+        try {
+            $customer->delete();
+            $response = $this->responseSuccess('DELETE', $customer, 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            $response = $this->responseError($th->getMessage(), 401);
         }
 
         return $response;

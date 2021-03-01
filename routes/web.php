@@ -17,7 +17,7 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'api' ], function () use ($router) {
+$router->group(['prefix' => 'api', 'middleware' => 'cors' ], function () use ($router) {
     //
     $router->group(['namespace' => 'User', 'prefix' => 'user', 'middleware' => 'auth'], function () use ($router) {
         $router->get('/', 'UserController@index');
@@ -36,6 +36,11 @@ $router->group(['prefix' => 'api' ], function () use ($router) {
         $router->post('/store', 'CustomerController@store');
         $router->put('/update/{id}', 'CustomerController@update');
         $router->get('/show/{id}', 'CustomerController@show');
+    });
+
+    $router->group(['namespace' => 'Category', 'prefix' => 'categories'], function () use ($router) {
+        $router->get('/', 'CategoryController@index');
+        $router->post('/store', 'CategoryController@store');
     });
 
     $router->group(['prefix' => 'login', 'namespace' => 'User'], function () use ($router) {

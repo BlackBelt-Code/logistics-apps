@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Customer extends Model
 {
@@ -22,6 +23,16 @@ class Customer extends Model
     protected $rules = [
         'name' => 'unique:customers, name'
     ];
+
+    public function getCreatedAtAttribute()
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');
+    }
+
+    public function getUpdatedAtAttribute()
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');
+    }
 
     public function scopeCustomerGet($query) {
         return $query->select('*')->get();
