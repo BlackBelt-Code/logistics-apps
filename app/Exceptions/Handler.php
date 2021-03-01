@@ -25,7 +25,7 @@ class Handler extends ExceptionHandler
         ModelNotFoundException::class,
         ValidationException::class,
     ];
-    
+
     /**
      * This mapping holds exceptions we're interested in and creates a simple configuration that can guide us
      * with formatting how it is rendered.
@@ -38,25 +38,25 @@ class Handler extends ExceptionHandler
             'message' => 'Could not find what you were looking for.',
             'adaptMessage' => false,
         ],
-        
+
         NotFoundHttpException::class => [
             'code' => 404,
             'message' => 'Could not find what you were looking for.',
             'adaptMessage' => false,
         ],
-        
+
         MethodNotAllowedHttpException::class => [
             'code' => 405,
             'message' => 'This method is not allowed for this endpoint.',
             'adaptMessage' => false,
         ],
-        
+
         ValidationException::class => [
             'code' => 422,
             'message' => 'Some data failed validation in the request',
             'adaptMessage' => false,
         ],
-        
+
         \InvalidArgumentException::class => [
             'code' => 400,
             'message' => 'You provided some invalid input value',
@@ -91,10 +91,10 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         $response = $this->formatException($exception);
-    
+
         return response()->json(['error' => $response], $response['status'] ?? 500);
     }
-    
+
     /**
      * A simple implementation to help us format an exception before we render me
      *
@@ -106,7 +106,7 @@ class Handler extends ExceptionHandler
     {
         # We get the class name for the exception that was raised
         $exceptionClass = get_class($exception);
-    
+
         # we see if we have registered it in the mapping - if it isn't
         # we create an initial structure as an 'Internal Server Error'
         # note that this can always be revised at a later time
@@ -115,13 +115,13 @@ class Handler extends ExceptionHandler
             'message' => $exception->getMessage() ?? 'Something went wrong while processing your request',
             'adaptMessage' => false,
         ];
-    
+
         if (! empty($definition['adaptMessage'])) {
-        
+
             $definition['message'] = $exception->getMessage() ?? $definition['message'];
-        
+
         }
-        
+
         return [
             'status' => $definition['code'] ?? 500,
             'user' => $definition['user'] ?? 'Error',

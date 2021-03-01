@@ -18,7 +18,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api' ], function () use ($router) {
-    // 
+    //
     $router->group(['namespace' => 'User', 'prefix' => 'user', 'middleware' => 'auth'], function () use ($router) {
         $router->get('/', 'UserController@index');
         $router->post('/store', 'UserController@store');
@@ -29,6 +29,13 @@ $router->group(['prefix' => 'api' ], function () use ($router) {
         $router->get('/login', 'UserController@getUserLogin');
         $router->post('/logout', 'UserController@logout');
         $router->get('/search', 'UserController@search');
+    });
+
+    $router->group(['namespace' => 'Customer', 'prefix' => 'customer'], function () use ($router) {
+        $router->get('/', 'CustomerController@index');
+        $router->post('/store', 'CustomerController@store');
+        $router->put('/update/{id}', 'CustomerController@update');
+        $router->get('/show/{id}', 'CustomerController@show');
     });
 
     $router->group(['prefix' => 'login', 'namespace' => 'User'], function () use ($router) {
