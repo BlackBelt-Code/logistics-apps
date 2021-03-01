@@ -41,6 +41,13 @@ $router->group(['prefix' => 'api', 'middleware' => 'cors' ], function () use ($r
     $router->group(['namespace' => 'Category', 'prefix' => 'categories'], function () use ($router) {
         $router->get('/', 'CategoryController@index');
         $router->post('/store', 'CategoryController@store');
+        $router->put('/update/{id}', 'CategoryController@update');
+        $router->get('/show/{id}', 'CategoryController@show');
+        $router->delete('/delete/{id}', 'CategoryController@show');
+    });
+
+    $router->group(['namespace' => 'Order', 'prefix' => 'order'], function () use ($router){
+        $router->get('/', 'OrderController@index');
     });
 
     $router->group(['prefix' => 'login', 'namespace' => 'User'], function () use ($router) {

@@ -21,10 +21,40 @@ class Category extends Model
         'name' => 'unique:categories, name'
     ];
 
-    public function setCreatedAt($value)
+    public function order()
     {
-        $this->attributes['created_at'] = (new Carbon($value))->format('d/m/y');
+        return $this->hasOne('App\Models\Order');
     }
+
+    /*
+        SCOPE
+    */
+
+    public function scopeCategoryGet($query)
+    {
+        return $query->select('*')->get();
+    }
+
+    /*
+        SET ATTRIBUTE
+     */
+
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucfirst($value);
+    }
+
+    public function setDescriptionAttribute($value)
+    {
+        $this->attributes['description'] = ucfirst($value);
+    }
+
+
+    /*
+        GET ATTRIBUTE
+    */
+
 
     public function getCreatedAtAttribute()
     {
@@ -34,10 +64,5 @@ class Category extends Model
     public function getUpdatedAtAttribute()
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');
-    }
-
-    public function scopeCategoryGet($query)
-    {
-        return $query->select('*')->get();
     }
 }

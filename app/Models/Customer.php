@@ -24,6 +24,13 @@ class Customer extends Model
         'name' => 'unique:customers, name'
     ];
 
+
+    public function order()
+    {
+        return $this->hasOne('App\Models\Order');
+    }
+
+
     public function getCreatedAtAttribute()
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');

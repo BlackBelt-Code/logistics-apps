@@ -44,4 +44,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    public function order()
+    {
+        return $this->hasOne('App\Models\Order');
+    }
 }
