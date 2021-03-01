@@ -194,7 +194,7 @@ class UserController extends Controller
     }
 
     public function sendResetToken(Request $request) {
-        
+
         // $this->validate($request, [
         //     'email' => 'required|email|exists:users'
         // ]);
@@ -212,7 +212,7 @@ class UserController extends Controller
     }
 
     public function verifyResetPassword(Request $request, $token) {
-        
+
         $user = User::where('reset_token', $token)->first();
 
         if($user) {
