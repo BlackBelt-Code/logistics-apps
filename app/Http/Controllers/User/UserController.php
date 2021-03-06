@@ -261,10 +261,13 @@ class UserController extends Controller
 
 
 
-    public function select2_user()
+    public function select2_user(Request $request)
     {
-        $user = User::Select2User();
+        // $user = User::Select2User();
 
-        return response()->json($user, 200);
+        // return response()->json($user, 200);
+        $user = User::where('name', 'LIKE', '%' . $request->input('term', '') . '%')
+            ->get(['id', 'name as text']);
+        return ['results' => $user];
     }
 }

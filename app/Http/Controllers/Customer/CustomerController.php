@@ -141,10 +141,13 @@ class CustomerController extends Controller
         return $response;
     }
 
-    public function select2_customer() {
+    public function select2_customer(Request $request) {
 
-        $customer = Customer::Select2Customer();
+        // $customer = Customer::Select2Customer();
+        $customer = Customer::where('name', 'LIKE', '%' . $request->input('term', '') . '%')
+            ->get(['id', 'name as text']);
+        return ['results' => $customer];
 
-        return response()->json($customer, 200);
+        // return response()->json($customer, 200);
     }
 }

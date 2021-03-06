@@ -64,7 +64,6 @@ class CategoryController extends Controller
         }
 
         return $response;
-
     }
 
     public function update(Request $request, $id)
@@ -89,14 +88,13 @@ class CategoryController extends Controller
         }
 
         return $response;
-
     }
 
     public function show($id)
     {
-         $categories = Category::find($id);
+        $categories = Category::find($id);
 
-         try {
+        try {
             $response = $this->responseSuccess('GET BY ID', $categories, 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -111,7 +109,7 @@ class CategoryController extends Controller
 
         $categories = Category::find($id);
 
-         try {
+        try {
             $response = $this->responseSuccess('DELETE', $categories, 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -121,10 +119,10 @@ class CategoryController extends Controller
         return $response;
     }
 
-    public function select2_category() {
-
-        $categories = Category::Select2Category();
-
-        return response()->json($categories);
+    public function select2_category(Request $request)
+    {
+        $categories = Category::where('name', 'LIKE', '%' . $request->input('term', '') . '%')
+            ->get(['id', 'name as text']);
+        return ['results' => $categories];
     }
 }
