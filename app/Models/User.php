@@ -49,4 +49,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->hasOne('App\Models\Order');
     }
+
+    public function scopeSelect2User($query) {
+        return $query->select('id', 'name as text')->get();
+    }
 }

@@ -12,14 +12,24 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+// header('Access-Control-Allow-Headers: Authorization, Content-Type');
+// // header('Access-Control-Allow-Headers: *');
+// header('Access-Control-Allow-Methods:*');
+// header('Access-Control-Allow-Origin:*');
+// // header('Access-Control-Content-Type: application/json');
+// header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
+// header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+// header('Access-Control-Allow-Credentials: true');
+// header('Content-Type: application/json; charset=utf-8');
+// header("Cache-Control: public,max-age=3600");
 
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'api', 'middleware' => 'cors' ], function () use ($router) {
+$router->group(['prefix' => 'api', 'middleware' => 'cors'], function () use ($router) {
     //
-    $router->group(['namespace' => 'User', 'prefix' => 'user', 'middleware' => 'auth'], function () use ($router) {
+    $router->group(['namespace' => 'User', 'prefix' => 'user'], function () use ($router) {
         $router->get('/', 'UserController@index');
         $router->post('/store', 'UserController@store');
         $router->get('/show/{id}', 'UserController@show');
@@ -36,6 +46,8 @@ $router->group(['prefix' => 'api', 'middleware' => 'cors' ], function () use ($r
         $router->post('/store', 'CustomerController@store');
         $router->put('/update/{id}', 'CustomerController@update');
         $router->get('/show/{id}', 'CustomerController@show');
+
+        $router->post('/select2-data', 'CustomerController@select2_customer');
     });
 
     $router->group(['namespace' => 'Category', 'prefix' => 'categories'], function () use ($router) {
@@ -44,10 +56,18 @@ $router->group(['prefix' => 'api', 'middleware' => 'cors' ], function () use ($r
         $router->put('/update/{id}', 'CategoryController@update');
         $router->get('/show/{id}', 'CategoryController@show');
         $router->delete('/delete/{id}', 'CategoryController@show');
+
+        $router->post('/select2-data', 'CategoryController@select2_category');
     });
 
-    $router->group(['namespace' => 'Order', 'prefix' => 'order'], function () use ($router){
+    $router->group(['namespace' => 'Order', 'prefix' => 'order'], function () use ($router) {
         $router->get('/', 'OrderController@index');
+        $router->post('/store', 'OrderController@store');
+    });
+
+
+    $router->group(['namespace' => 'User', 'prefix' => 'user'], function () use ($router) {
+        $router->post('/select2-data', 'UserController@select2_user');
     });
 
     $router->group(['prefix' => 'login', 'namespace' => 'User'], function () use ($router) {

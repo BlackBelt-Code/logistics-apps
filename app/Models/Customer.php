@@ -44,4 +44,8 @@ class Customer extends Model
     public function scopeCustomerGet($query) {
         return $query->select('*')->get();
     }
+
+    public function scopeSelect2Customer($query) {
+        return $query->select('id', 'name as text')->get();
+    }
 }

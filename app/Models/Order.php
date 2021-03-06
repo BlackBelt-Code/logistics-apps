@@ -14,18 +14,18 @@ class Order extends Model
 
     protected $fillable = [
         'tracking_number',
-        // 'customer_id',
+        'customer_id',
         'sender_name',
         'sender_phone',
         'sender_address',
         'delivery_name',
         'delivery_phone',
         'delivery_address',
-        // 'category_id',
+        'category_id',
         'shipping_cost',
         'item_price',
         'is_insurance',
-        // 'user_id',
+        'user_id',
         'user_fee',
         'note',
         'shipping_photo',
@@ -33,9 +33,9 @@ class Order extends Model
         'status',
     ];
 
-    protected $rules = [
-        'name' => 'unique:customers, name'
-    ];
+    // protected $rules = [
+    //     'name' => 'unique:customers, name'
+    // ];
 
     /**
      * ELEQUENT
@@ -70,13 +70,13 @@ class Order extends Model
      * GET ATTRIBUTE
      */
 
-    public function getCreatedAtAttribute()
-    {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');
-    }
+    // public function getCreatedAtAttribute()
+    // {
+    //     return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');
+    // }
 
-    public function getUpdatedAtAttribute()
-    {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');
-    }
+    // public function getUpdatedAtAttribute()
+    // {
+    //     return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->tz('Asia/Jakarta')->format('d/m/Y');
+    // }
 }

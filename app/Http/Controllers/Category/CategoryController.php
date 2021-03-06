@@ -20,14 +20,18 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $customer = Category::CategoryGet();
-
-        try {
-            $response = $this->responseSuccess('GET', $customer, 200);
-        } catch (\Throwable $th) {
-            //throw $th;
-            $response = $this->responseError($th->getMessage(), 401);
-        }
+        $categories = Category::CategoryGet();
+        // var_dump($categories); die;
+        // $response = $this->responseSuccess('POST', $categories, 200);
+        $response = response()->json($categories, 200);
+        // try {
+        //     // $response = $this->responseSuccess('GET', $customer, 200);
+        //     $response = response()->json($categories, 200);
+        // } catch (\Throwable $th) {
+        //     //throw $th;
+        //     // $response = $this->responseError($th->getMessage(), 401);
+        //     $response = response()->json($th->getMessage(), 200);
+        // }
 
         return $response;
     }
@@ -115,5 +119,12 @@ class CategoryController extends Controller
         }
 
         return $response;
+    }
+
+    public function select2_category() {
+
+        $categories = Category::Select2Category();
+
+        return response()->json($categories);
     }
 }

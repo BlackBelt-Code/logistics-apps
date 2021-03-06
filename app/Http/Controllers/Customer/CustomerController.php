@@ -140,4 +140,11 @@ class CustomerController extends Controller
 
         return $response;
     }
+
+    public function select2_customer() {
+
+        $customer = Customer::Select2Customer();
+
+        return response()->json($customer, 200);
+    }
 }

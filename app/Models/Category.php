@@ -35,6 +35,10 @@ class Category extends Model
         return $query->select('*')->get();
     }
 
+    public function scopeSelect2Category($query) {
+        return $query->select('id', 'name as text')->get();
+    }
+
     /*
         SET ATTRIBUTE
      */

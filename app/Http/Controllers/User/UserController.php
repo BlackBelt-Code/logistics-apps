@@ -193,7 +193,8 @@ class UserController extends Controller
         }
     }
 
-    public function sendResetToken(Request $request) {
+    public function sendResetToken(Request $request)
+    {
 
         // $this->validate($request, [
         //     'email' => 'required|email|exists:users'
@@ -208,14 +209,14 @@ class UserController extends Controller
         Mail::to('ilyas@mewahniagajaya.com')->send(new ResetPasswordMail($user));
 
         echo "send email using gmail smtp";
-
     }
 
-    public function verifyResetPassword(Request $request, $token) {
+    public function verifyResetPassword(Request $request, $token)
+    {
 
         $user = User::where('reset_token', $token)->first();
 
-        if($user) {
+        if ($user) {
             $user->update(['password' => app('hash')->make($request->password)]);
 
             return response()->json(['status' => 'success']);
@@ -224,27 +225,30 @@ class UserController extends Controller
         return response()->json(['status' => 'error']);
     }
 
-    public function getUserLogin(Request $request) {
+    public function getUserLogin(Request $request)
+    {
         return response()->json([
             'status' => 'success',
             'data' => $request->user(),
         ]);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $user = $request->user();
         $user->update(['api_token' => NULL]);
 
-        return response()->json(['status' => 'success' ], 200);
+        return response()->json(['status' => 'success'], 200);
     }
 
 
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
 
-            $user = User::orderBy('created_at', 'desc')->when($request->q, function($user) use ($request) {
-                $user = $user->where('name', 'LIKE', '%' . $request->q . '%');
-            })
-            ->when($request->id, function($user) use ($request) {
+        $user = User::orderBy('created_at', 'desc')->when($request->q, function ($user) use ($request) {
+            $user = $user->where('name', 'LIKE', '%' . $request->q . '%');
+        })
+            ->when($request->id, function ($user) use ($request) {
                 $user = $user->where('id', '=', $request->id);
             })->paginate(5);
 
@@ -253,5 +257,14 @@ class UserController extends Controller
             'status' => 'success',
             'data' => $user,
         ]);
+    }
+
+
+
+    public function select2_user()
+    {
+        $user = User::Select2User();
+
+        return response()->json($user, 200);
     }
 }
